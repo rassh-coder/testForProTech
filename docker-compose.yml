@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            - APP_ENV=local
+            - APP_KEY=base64:...
+            - DB_CONNECTION=pgsql
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_DATABASE=carsharing
+            - DB_USERNAME=laravel
+            - DB_PASSWORD=secret
+            - REDIS_HOST=redis
+            - QUEUE_CONNECTION=rabbitmq
+            - RABBITMQ_HOST=rabbitmq
+        volumes:
+            - .:/var/www/html
+        networks:
+            - carsharing-net
+        depends_on:
+            - postgres
+            - redis
+            - rabbitmq
+
+    nginx:
+        image: nginx:1.25
+        ports:
+            - "80:80"
+        volumes:
+            - ./docker/nginx:/etc/nginx/conf.d
+            - ./public:/var/www/html/public
+        networks:
+            - carsharing-net
+        depends_on:
+            - app
+
+    postgres:
+        image: postgres:15
+        environment:
+            POSTGRES_USER: laravel
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: carsharing
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks:
+            - carsharing-net
+
+    redis:
+        image: redis:7
+        volumes:
+            - redisdata:/data
+        networks:
+            - carsharing-net
+
+    rabbitmq:
+        image: rabbitmq:3.12-management
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        ports:
+            - "15672:15672"
+        networks:
+            - carsharing-net
+
+    horizon:
+        build: .
+        command: php artisan horizon
+        depends_on:
+            - app
+            - redis
+        networks:
+            - carsharing-net
+
+volumes:
+    pgdata:
+    redisdata:
+
+networks:
+    carsharing-net:
+        driver: bridge
