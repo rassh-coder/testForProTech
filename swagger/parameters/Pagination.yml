@@ -1,0 +1,7 @@
+Pagination:
+  in: query
+  name: page
+  schema:
+    type: integer
+    default: 1
+  description: Номер страницы

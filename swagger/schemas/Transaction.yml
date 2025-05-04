@@ -1,0 +1,21 @@
+Transaction:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    type:
+      type: string
+      enum: [deposit, withdrawal, payment]
+      example: "deposit"
+    amount:
+      type: number
+      format: float
+      example: 100.50
+    description:
+      type: string
+      example: "Пополнение баланса"
+    created_at:
+      type: string
+      format: date-time
+      example: "2024-05-20T14:30:00Z"

@@ -1,0 +1,12 @@
+ValidationError:
+  description: Ошибка валидации
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/Error"
+      examples:
+        InvalidData:
+          value:
+            message: "The given data was invalid"
+            errors:
+              vehicle_id: ["The vehicle_id field is required"]

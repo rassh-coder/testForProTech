@@ -1,0 +1,11 @@
+Location:
+  type: object
+  properties:
+    lat:
+      type: number
+      format: float
+      example: 55.7558
+    lng:
+      type: number
+      format: float
+      example: 37.6176

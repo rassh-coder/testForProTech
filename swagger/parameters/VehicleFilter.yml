@@ -1,0 +1,7 @@
+VehicleStatusFilter:
+  in: query
+  name: status
+  schema:
+    type: string
+    enum: [available, in_use, maintenance]
+  description: Фильтр по статусу автомобиля

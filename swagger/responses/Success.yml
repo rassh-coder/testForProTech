@@ -1,0 +1,13 @@
+Success:
+  description: Успешный ответ
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          data:
+            type: object
+            example: {}
+          message:
+            type: string
+            example: "Operation completed successfully"

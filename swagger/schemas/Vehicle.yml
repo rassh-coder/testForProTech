@@ -1,0 +1,21 @@
+Vehicle:
+  type: object
+  required:
+    - id
+    - vin
+    - status
+  properties:
+    id:
+      type: integer
+      example: 1
+    vin:
+      type: string
+      example: "ABC123456789XYZ"
+    status:
+      type: string
+      enum: [available, in_use, maintenance]
+      example: "available"
+    location:
+      $ref: "#/components/schemas/Location"
+    model:
+      $ref: "#/components/schemas/VehicleModel"

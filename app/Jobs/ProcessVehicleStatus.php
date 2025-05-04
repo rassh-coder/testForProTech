@@ -2,15 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Events\VehicleStatusUpdated;
 use App\Models\Vehicle;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateVehicleStatus implements ShouldQueue
+class ProcessVehicleStatus implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -27,13 +26,21 @@ class UpdateVehicleStatus implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle()
+    public function handle(): void
     {
-        $this->vehicle->update([
-            'status' => $this->data['status'],
-            'location' => DB::raw("ST_MakePoint({$this->data['lng']}, {$this->data['lat']})"),
-        ]);
+        $updateData = ['status' => $this->status];
 
-        event(new VehicleStatusUpdated($this->vehicle, $this->data['status']));
+        if ($this->lat && $this->lng) {
+            $updateData['location'] = \DB::raw(
+                "ST_SetSRID(ST_MakePoint({$this->lng}, {$this->lat}), 4326)"
+            );
+        }
+
+        $this->vehicle->update($updateData);
+
+        event(new \App\Events\VehicleStatusUpdated(
+            $this->vehicle,
+            $this->status
+        ));
     }
 }
